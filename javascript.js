@@ -3,16 +3,9 @@ const screen = document.querySelector('#screen');
 const buttons = document.querySelectorAll('input[type="button"]');
 buttons.forEach(button => button.addEventListener('click', buttonClick));
 
-//decimal boolean show already pressed
-
-//how to build-up calculation of input?
 let inputs = [0];
 let operator = '+';
 let operatorPressed = false; //to clear screen when number is entered next, and also to evaluate and show after next operator is pressed
-
-//-how to show running total as build-up?
-//functions of +-*/
-//function of = to show built-up sum
 
 function storeNumber() {
     const childrenNodes = screen.children;
@@ -45,7 +38,6 @@ function operate(operator) {
 
 function buttonClick() {
     const thisID = this.id //store num or operator
-    //console.log(thisID);
 
     const divText = document.createElement('div');
     switch (thisID) {
@@ -54,16 +46,12 @@ function buttonClick() {
             inputs = [0];
             operator = '+';
             operatorPressed = false;
-
-            //also need to clear memory of equation "build-up" 
             break;
         case 'equals': 
             inputs[1] = storeNumber();
             if (inputs[1] != '') {
                 inputs[0] = operate(operator);
             }
-            
-            //operator = thisID; //change operator to pressed one AFTER operation of previous equation
             
             screen.innerHTML = inputs[0];
             operatorPressed = true;
@@ -78,7 +66,7 @@ function buttonClick() {
             break;
         case '+': case '-': case '*': case '/':
             inputs[1] = storeNumber();
-            if (inputs[1] != '') {
+            if (inputs[1] != '') { //check to make sure a number was input and not just "changing" operator (consec different operator clicks)
                 inputs[0] = operate(operator);
             }
             
@@ -88,22 +76,37 @@ function buttonClick() {
             operatorPressed = true;
             break;
         case '+/-': 
+            if (operatorPressed == true) {
+                screen.innerHTML = ''
+                operatorPressed = false;
+            }
+            //check if any number has been input yet
+            if (screen.firstElementChild == null) {
+                break;
+            }
+            else if (screen.firstElementChild.innerHTML == '-') { //if already negative number
+                screen.removeChild(screen.firstElementChild);
+            }
+            else { //turn number to negative number
+                const negative = document.createElement('div');
+                negative.innerHTML = '-';
+                screen.prepend(negative);
+            }
             break;
         case '0': 
             if (operatorPressed == true) {
                 screen.innerHTML = ''
                 operatorPressed = false;
             }
-            // console.log(screen.innerHTML);
-            // if (screen.innerHTML === '') { //can't type '0' when there's already nothing
-            //     console.log(screen.innerHTML);
-            //     break;
-            //}
+            if (screen.length == 0 || screen.firstElementChild.innerHTML == 0) //check if screen is blank or 0, thus shouldn't enter 0
+            {
+                break;
+            }
             divText.textContent = thisID;
             screen.appendChild(divText);
             break;
         case '.': 
-            console.log([...storeNumber()]);
+
             if (operatorPressed == true) {
                 screen.innerHTML = ''
                 operatorPressed = false;
@@ -118,7 +121,4 @@ function buttonClick() {
     }
 }
 
-function showInput(button) {
-    
-}
-console.log(buttons);
+//console.log(buttons);
